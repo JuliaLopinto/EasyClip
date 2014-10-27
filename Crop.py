@@ -1,5 +1,5 @@
 from __main__ import vtk, qt, ctk, slicer
-
+import numpy
 #
 # tool to crop the models vtk
 #
@@ -47,10 +47,26 @@ class CropWidget:
 
       # Set local var as instance attribute
       self.getClipping = getClipping
-
+      
+      Scene = slicer.qMRMLSceneModel()
+      Scene.NodeTypes(2)
+      Scene.checkableColumn = True
+    
+      numNodes = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelNode")
+      for i in range (3,numNodes):
+          mh = slicer.mrmlScene.GetNthNodeByClass(i,"vtkMRMLModelNode" )
+          print mh.GetName()
+          Scene.insertRow(i-2, mh.GetName())
+    
+      
+    
+    #sampleFormLayout.addWidget(Scene)
 
     def getClippingClicked(self):
-        model = slicer.util.getNode('Model_GM_T0_Reg_MD_novo')
+        #for i in range (3, self.numNodes):
+        
+        
+        model = slicer.util.getNode("Model_GM_T0_Reg_MD_novo")
         poly = model.GetPolyData()
 
 

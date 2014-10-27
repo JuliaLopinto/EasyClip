@@ -43,15 +43,28 @@ class InterfaceWidget:
       list_model = qt.QLabel("List of models:")
       self.loadFormLayout.addWidget(list_model)
 
-      inputModelSelectorFrame = qt.QFrame(self.parent)
-      inputModelSelectorFrame.setLayout(qt.QHBoxLayout())
-      self.parent.layout().addWidget(inputModelSelectorFrame)
+#     inputModelSelectorFrame = qt.QFrame(self.parent)
+#     inputModelSelectorFrame.setLayout(qt.QHBoxLayout())
+#     self.parent.layout().addWidget(inputModelSelectorFrame)
 
-      inputModelSelector = slicer.qMRMLNodeAttributeTableView(inputModelSelectorFrame)
-      inputModelSelector.addAttribute()
-      inputModelSelector.accessibleName = True
+#     inputModelSelector = slicer.qMRMLNodeAttributeTableView(inputModelSelectorFrame)
+#     inputModelSelector.addAttribute()
+#     inputModelSelector.accessibleName = True
       #inputModelSelector.setMRMLScene( slicer.mrmlScene )
-      self.loadFormLayout.addWidget(inputModelSelector)
+      #self.loadFormLayout.addWidget(inputModelSelector)
+      
+      
+      
+      
+      
+      #inputList= qt.QListWidget(self.parent)
+      #self.loadFormLayout.addWidget(inputList)
+      
+      inputSceneModel = slicer.qMRMLSceneModel()
+      inputSceneModel.NodeTypes(1)
+      #self.loadFormLayout.addWidget(inputSceneModel)
+      
+      
       
       # Add vertical spacer
       self.layout.addStretch(1)
@@ -65,35 +78,36 @@ class InterfaceWidget:
       self.loadFormLayout = qt.QFormLayout(self.loadCollapsibleButton)
       
       #--------------------------- Planes --------------------------#
-      groupBox2 = qt.QGroupBox("Planes")
-      self.loadFormLayout.addWidget(groupBox2)
-
+      
+      
       label = qt.QLabel("Choose the plane you want to use:")
       self.loadFormLayout.addWidget(label)
 
-      redPlaneCheckBox = qt.QCheckBox("Red Plane")
-      self.loadFormLayout.addWidget(redPlaneCheckBox)
+      groupBox = qt.QGroupBox("Plane")
+      self.loadFormLayout.addWidget(groupBox)
+
+      self.redPlaneCheckBox = qt.QCheckBox("Red Plane")
+      self.loadFormLayout.addWidget(self.redPlaneCheckBox)
+      self.redPlaneCheckBox.connect('clicked(bool)', self.redPlaneCheckBoxClicked)
+      
       # Add vertical spacer
       self.layout.addStretch(1)
       
-      # Set local var as instance attribute
-      self.redPlaneCheckBox = redPlaneCheckBox
       
-      yellowPlaneCheckBox = qt.QCheckBox("Yellow Plane")
-      self.loadFormLayout.addWidget(yellowPlaneCheckBox)
+      self.yellowPlaneCheckBox = qt.QCheckBox("Yellow Plane")
+      self.loadFormLayout.addWidget(self.yellowPlaneCheckBox)
+      self.yellowPlaneCheckBox.connect('clicked(bool)', self.yellowPlaneCheckBoxClicked)
+      
       # Add vertical spacer
       self.layout.addStretch(1)
       
-      # Set local var as instance attribute
-      self.yellowPlaneCheckBox = yellowPlaneCheckBox
       
-      greenPlaneCheckBox = qt.QCheckBox("Green Plane")
-      self.loadFormLayout.addWidget(greenPlaneCheckBox)
+      self.greenPlaneCheckBox = qt.QCheckBox("Green Plane")
+      self.loadFormLayout.addWidget(self.greenPlaneCheckBox)
+      self.greenPlaneCheckBox.connect('clicked(bool)', self.greenPlaneCheckBoxClicked)
       # Add vertical spacer
       self.layout.addStretch(1)
       
-      # Set local var as instance attribute
-      self.greenPlaneCheckBox = greenPlaneCheckBox
       
       #-------------------------- Buttons --------------------------#
       # GET COORDINATES BUTTON
@@ -104,10 +118,6 @@ class InterfaceWidget:
       # Add vertical spacer
       self.layout.addStretch(1)
       
-      # Set local var as instance attribute
-      self.getCoordButton = getCoordButton
-      
-      
       # SAVE PLANE BUTTON
       save = qt.QPushButton("Save plane")
       self.loadFormLayout.addWidget(save)
@@ -116,25 +126,17 @@ class InterfaceWidget:
       # Add vertical spacer
       self.layout.addStretch(1)
       
-      # Set local var as instance attribute
-      self.save = save
 
-      vbox2 = qt.QVBoxLayout()
-      vbox2.addWidget(label)
-      vbox2.addWidget(redPlaneCheckBox)
-      vbox2.addWidget(yellowPlaneCheckBox)
-      vbox2.addWidget(greenPlaneCheckBox)
-      vbox2.addWidget(getCoordButton)
-      vbox2.addWidget(save)
-      vbox2.addStretch(1)
-      groupBox2.setLayout(vbox2)
-
-
-      # Add vertical spacer
-      self.layout.addStretch(1)
-
-      # Set local var as instance attribute
-      self.groupBox2 = groupBox2
+      vbox = qt.QVBoxLayout()
+      
+      vbox.addWidget(self.redPlaneCheckBox)
+      vbox.addWidget(self.yellowPlaneCheckBox)
+      vbox.addWidget(self.greenPlaneCheckBox)
+      vbox.addWidget(getCoordButton)
+      vbox.addWidget(save)
+      
+      vbox.addStretch(1)
+      groupBox.setLayout(vbox)
 
 
       groupBox3 = qt.QGroupBox("Clipping")
@@ -168,39 +170,53 @@ class InterfaceWidget:
       red_plane = qt.QCheckBox("Red Slice Clipping:")
       self.loadFormLayout.addWidget(red_plane)
       
+
+      buttonFrame1 = qt.QFrame(self.parent)
+      buttonFrame1.setLayout(qt.QHBoxLayout())
+      self.layout.addWidget(buttonFrame1)
       radio_red1 = qt.QRadioButton("Negative")
-      self.loadFormLayout.addWidget(radio_red1)
+      buttonFrame1.layout().addWidget(radio_red1)
       radio_red2 = qt.QRadioButton("Positive")
-      self.loadFormLayout.addWidget(radio_red2)
-      
+      buttonFrame1.layout().addWidget(radio_red2)
+
+
       yellow_plane = qt.QCheckBox("Yellow Slice Clipping:")
       self.loadFormLayout.addWidget(yellow_plane)
-      
+
+
+      buttonFrame2 = qt.QFrame(self.parent)
+      buttonFrame2.setLayout(qt.QHBoxLayout())
+      self.layout.addWidget(buttonFrame2)
+
       radio_yellow1 = qt.QRadioButton("Negative")
-      self.loadFormLayout.addWidget(radio_yellow1)
+      buttonFrame2.layout().addWidget(radio_yellow1)
       radio_yellow2 = qt.QRadioButton("Positive")
-      self.loadFormLayout.addWidget(radio_yellow2)
+      buttonFrame2.layout().addWidget(radio_yellow2)
+
       
       green_plane = qt.QCheckBox("Green Slice Clipping:")
       self.loadFormLayout.addWidget(green_plane)
-      
+
+
+      buttonFrame3 = qt.QFrame(self.parent)
+      buttonFrame3.setLayout(qt.QHBoxLayout())
+      self.layout.addWidget(buttonFrame3)
+
       radio_green1 = qt.QRadioButton("Negative")
-      self.loadFormLayout.addWidget(radio_green1)
+      buttonFrame3.layout().addWidget(radio_green1)
       radio_green2 = qt.QRadioButton("Positive")
-      self.loadFormLayout.addWidget(radio_green2)
+      buttonFrame3.layout().addWidget(radio_green2)
 
       vbox3 = qt.QVBoxLayout()
 
       vbox3.addWidget(label2)
       vbox3.addWidget(red_plane)
-      vbox3.addWidget(radio_red1)
-      vbox3.addWidget(radio_red2)
+      vbox3.addWidget(buttonFrame1)
       vbox3.addWidget(yellow_plane)
-      vbox3.addWidget(radio_yellow1)
-      vbox3.addWidget(radio_yellow2)
+      vbox3.addWidget(buttonFrame2)
       vbox3.addWidget(green_plane)
-      vbox3.addWidget(radio_green1)
-      vbox3.addWidget(radio_green2)
+      vbox3.addWidget(buttonFrame3)
+
 
       vbox3.addWidget(buttonFrame)
 
@@ -222,23 +238,13 @@ class InterfaceWidget:
         self.layout.addWidget(buttonFrame)
         
         
-        reloadButton = qt.QPushButton("Reload")
-        buttonFrame.layout().addWidget(reloadButton)
-        #self.reloadButton.connect('clicked()', self.onReload)
+        self.reloadButton = qt.QPushButton("Reload")
+        buttonFrame.layout().addWidget(self.reloadButton)
+        self.reloadButton.connect('clicked()', self.onReload)
 
-        reloadAndTestButton = qt.QPushButton("Reload and Test")
-        buttonFrame.layout().addWidget(reloadAndTestButton)
-        #self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
         # Add vertical spacer
         self.layout.addStretch(1)
-      
-        # Set local var as instance attribute
-        self.reloadButton = reloadButton
-        self.reloadAndTestButton = reloadAndTestButton
-
-
-
 
       # Collapsible button -- Clipping part
       self.loadCollapsibleButton = ctk.ctkCollapsibleButton()
@@ -255,35 +261,34 @@ class InterfaceWidget:
 
 
     def onReload(self,moduleName="Interface"):
-        """Generic reload method for any scripted module.
-        ModuleWizard will subsitute correct default moduleName.
-        """
-        import imp, sys, os, slicer
-    
-        widgetName = moduleName + "Widget"
-    
-        filePath = eval('slicer.modules.%s.path' % moduleName.lower())
-        p = os.path.dirname(filePath)
-        if not sys.path.__contains__(p):
-            sys.path.insert(0,p)
-    
-                                            
-        parent = slicer.util.findChildren(name='%s Reload' % moduleName)[0].parent()
-        for child in parent.children():
-            try:
-                child.hide()
-            except AttributeError:
-                pass
-                                            
-        item = parent.layout().itemAt(0)
-        while item:
-            parent.layout().removeItem(item)
-            item = parent.layout().itemAt(0)
-                                            
-        globals()[widgetName.lower()] = eval('globals()["%s"].%s(parent)' % (moduleName, widgetName))
-        globals()[widgetName.lower()].setup()
+        globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
-    
+
+    def redPlaneCheckBoxClicked(self):
+        redslice = slicer.util.getNode('vtkMRMLSliceNodeRed')
+        if self.redPlaneCheckBox.isChecked():
+            redslice.SetWidgetVisible(True)
+        if not self.redPlaneCheckBox.isChecked():
+            redslice.SetWidgetVisible(False)
+
+    def yellowPlaneCheckBoxClicked(self):
+        yellowslice = slicer.util.getNode('vtkMRMLSliceNodeYellow')
+        if self.yellowPlaneCheckBox.isChecked():
+            yellowslice.SetWidgetVisible(True)
+        if not self.yellowPlaneCheckBox.isChecked():
+            yellowslice.SetWidgetVisible(False)
+
+    def greenPlaneCheckBoxClicked(self):
+        greenslice = slicer.util.getNode('vtkMRMLSliceNodeGreen')
+        if self.greenPlaneCheckBox.isChecked():
+            greenslice.SetWidgetVisible(True)
+        if not self.greenPlaneCheckBox.isChecked():
+            greenslice.SetWidgetVisible(False)
+
+
+
+
+
 
 
 
