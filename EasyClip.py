@@ -233,9 +233,9 @@ class EasyClipWidget:
         buttonFrame.setLayout(qt.QHBoxLayout())
         self.loadFormLayout.addWidget(buttonFrame)
 
-        self.PreviewButton = qt.QPushButton("Preview")
-        buttonFrame.layout().addWidget(self.PreviewButton)
-        self.PreviewButton.connect('clicked()', self.onPreview)
+        # self.PreviewButton = qt.QPushButton("Preview")
+        # buttonFrame.layout().addWidget(self.PreviewButton)
+        # self.PreviewButton.connect('clicked()', self.onPreview)
 
         self.ClippingButton = qt.QPushButton("Clipping")
         buttonFrame.layout().addWidget(self.ClippingButton)
@@ -740,60 +740,60 @@ class EasyClipWidget:
         return
       print("currentNode: {}".format(currentNode.GetName()))
 
-    def onPreview(self):
-        numNodes = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelNode")
-        for i in range(3, numNodes):
-            mh = slicer.mrmlScene.GetNthNodeByClass(i, "vtkMRMLModelNode")
-            model = slicer.util.getNode(mh.GetName())
-            polyData = model.GetPolyData()
-            pointData = polyData.GetPointData()
-
-            lut = vtk.vtkLookupTable()
-            tableSize = 2
-            lut.SetNumberOfTableValues(tableSize)
-            lut.Build()
-            lut.SetTableValue(0, 0.55, 0.54, 0.54, 1)
-            lut.SetTableValue(1, 1, 0, 0, 1)
-
-            arrayToAdd = vtk.vtkDoubleArray()
-            arrayToAdd.SetName("PreviewColor")
-
-            arrayToAdd.SetLookupTable(lut)
-            pointData.AddArray(arrayToAdd)
-
-            nb_points = polyData.GetNumberOfPoints()
-            tab_points = polyData.GetPoints()
-
-            coord_points = numpy.zeros(3)
-            IdList = vtk.vtkIdList()
-
-            for i in range (0,nb_points):
-                tab_points.GetPoint(i,coord_points)
-                if coord_points[1]<=-10:
-                    IdList.InsertNextId(i)
-
-
-            for i in range(0, nb_points):
-                arrayToAdd.InsertNextValue(0)
-
-            for i in range (0,IdList.GetNumberOfIds()):
-                arrayToAdd.SetValue(IdList.GetId(i),1)
-
-            pointData.SetScalars(arrayToAdd)
-
-            print arrayToAdd
-
-            self.displayROI(model, arrayToAdd.GetName())
-
-    def displayROI(self, inputModelNode, scalarName):
-        displayNode = inputModelNode.GetModelDisplayNode()
-        disabledModify = displayNode.StartModify()
-        displayNode.SetScalarVisibility(True)
-        displayNode.SetActiveScalarName(scalarName)
-        displayNode.EndModify(disabledModify)
+    # def onPreview(self):
+    #     numNodes = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelNode")
+    #     for i in range(3, numNodes):
+    #         mh = slicer.mrmlScene.GetNthNodeByClass(i, "vtkMRMLModelNode")
+    #         model = slicer.util.getNode(mh.GetName())
+    #         polyData = model.GetPolyData()
+    #         pointData = polyData.GetPointData()
+    #
+    #         lut = vtk.vtkLookupTable()
+    #         tableSize = 2
+    #         lut.SetNumberOfTableValues(tableSize)
+    #         lut.Build()
+    #         lut.SetTableValue(0, 0.55, 0.54, 0.54, 1)
+    #         lut.SetTableValue(1, 1, 0, 0, 1)
+    #
+    #         arrayToAdd = vtk.vtkDoubleArray()
+    #         arrayToAdd.SetName("PreviewColor")
+    #
+    #         arrayToAdd.SetLookupTable(lut)
+    #         pointData.AddArray(arrayToAdd)
+    #
+    #         nb_points = polyData.GetNumberOfPoints()
+    #         tab_points = polyData.GetPoints()
+    #
+    #         coord_points = numpy.zeros(3)
+    #         IdList = vtk.vtkIdList()
+    #
+    #         for i in range (0,nb_points):
+    #             tab_points.GetPoint(i,coord_points)
+    #             if coord_points[1]<=-10:
+    #                 IdList.InsertNextId(i)
+    #
+    #
+    #         for i in range(0, nb_points):
+    #             arrayToAdd.InsertNextValue(0)
+    #
+    #         for i in range (0,IdList.GetNumberOfIds()):
+    #             arrayToAdd.SetValue(IdList.GetId(i),1)
+    #
+    #         pointData.SetScalars(arrayToAdd)
+    #
+    #         print arrayToAdd
+    #
+    #         self.displayROI(model, arrayToAdd.GetName())
+    #
+    # def displayROI(self, inputModelNode, scalarName):
+    #     displayNode = inputModelNode.GetModelDisplayNode()
+    #     disabledModify = displayNode.StartModify()
+    #     displayNode.SetScalarVisibility(True)
+    #     displayNode.SetActiveScalarName(scalarName)
+    #     displayNode.EndModify(disabledModify)
 
     def onComputeBox(self):
-        # self.onReload("EasyClip")
+        self.onReload("EasyClip")
         #--------------------------- Box around the model --------------------------#
         node = slicer.util.getNode(self.elements.GetName())
         polydata = node.GetPolyData()
