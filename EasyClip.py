@@ -740,57 +740,57 @@ class EasyClipWidget:
         return
       print("currentNode: {}".format(currentNode.GetName()))
 
-    # def onPreview(self):
-    #     numNodes = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelNode")
-    #     for i in range(3, numNodes):
-    #         mh = slicer.mrmlScene.GetNthNodeByClass(i, "vtkMRMLModelNode")
-    #         model = slicer.util.getNode(mh.GetName())
-    #         polyData = model.GetPolyData()
-    #         pointData = polyData.GetPointData()
-    #
-    #         lut = vtk.vtkLookupTable()
-    #         tableSize = 2
-    #         lut.SetNumberOfTableValues(tableSize)
-    #         lut.Build()
-    #         lut.SetTableValue(0, 0.55, 0.54, 0.54, 1)
-    #         lut.SetTableValue(1, 1, 0, 0, 1)
-    #
-    #         arrayToAdd = vtk.vtkDoubleArray()
-    #         arrayToAdd.SetName("PreviewColor")
-    #
-    #         arrayToAdd.SetLookupTable(lut)
-    #         pointData.AddArray(arrayToAdd)
-    #
-    #         nb_points = polyData.GetNumberOfPoints()
-    #         tab_points = polyData.GetPoints()
-    #
-    #         coord_points = numpy.zeros(3)
-    #         IdList = vtk.vtkIdList()
-    #
-    #         for i in range (0,nb_points):
-    #             tab_points.GetPoint(i,coord_points)
-    #             if coord_points[1]<=-10:
-    #                 IdList.InsertNextId(i)
-    #
-    #
-    #         for i in range(0, nb_points):
-    #             arrayToAdd.InsertNextValue(0)
-    #
-    #         for i in range (0,IdList.GetNumberOfIds()):
-    #             arrayToAdd.SetValue(IdList.GetId(i),1)
-    #
-    #         pointData.SetScalars(arrayToAdd)
-    #
-    #         print arrayToAdd
-    #
-    #         self.displayROI(model, arrayToAdd.GetName())
-    #
-    # def displayROI(self, inputModelNode, scalarName):
-    #     displayNode = inputModelNode.GetModelDisplayNode()
-    #     disabledModify = displayNode.StartModify()
-    #     displayNode.SetScalarVisibility(True)
-    #     displayNode.SetActiveScalarName(scalarName)
-    #     displayNode.EndModify(disabledModify)
+    def onPreview(self):
+        numNodes = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelNode")
+        for i in range(3, numNodes):
+            mh = slicer.mrmlScene.GetNthNodeByClass(i, "vtkMRMLModelNode")
+            model = slicer.util.getNode(mh.GetName())
+            polyData = model.GetPolyData()
+            pointData = polyData.GetPointData()
+
+            lut = vtk.vtkLookupTable()
+            tableSize = 2
+            lut.SetNumberOfTableValues(tableSize)
+            lut.Build()
+            lut.SetTableValue(0, 0.55, 0.54, 0.54, 1)
+            lut.SetTableValue(1, 1, 0, 0, 1)
+
+            arrayToAdd = vtk.vtkDoubleArray()
+            arrayToAdd.SetName("PreviewColor")
+
+            arrayToAdd.SetLookupTable(lut)
+            pointData.AddArray(arrayToAdd)
+
+            nb_points = polyData.GetNumberOfPoints()
+            tab_points = polyData.GetPoints()
+
+            coord_points = numpy.zeros(3)
+            IdList = vtk.vtkIdList()
+
+            for i in range (0,nb_points):
+                tab_points.GetPoint(i,coord_points)
+                if coord_points[1]<=-10:
+                    IdList.InsertNextId(i)
+
+
+            for i in range(0, nb_points):
+                arrayToAdd.InsertNextValue(0)
+
+            for i in range (0,IdList.GetNumberOfIds()):
+                arrayToAdd.SetValue(IdList.GetId(i),1)
+
+            pointData.SetScalars(arrayToAdd)
+
+            print arrayToAdd
+
+            self.displayROI(model, arrayToAdd.GetName())
+
+    def displayROI(self, inputModelNode, scalarName):
+        displayNode = inputModelNode.GetModelDisplayNode()
+        disabledModify = displayNode.StartModify()
+        displayNode.SetScalarVisibility(True)
+        displayNode.SetActiveScalarName(scalarName)
+        displayNode.EndModify(disabledModify)
 
     def onComputeBox(self):
         self.onReload("EasyClip")
@@ -828,15 +828,17 @@ class EasyClipWidget:
         print tab
         self.image.SetOrigin(tab)
 
+
         writer = sitk.ImageFileWriter()
-        writer.SetFileName("Box.nrrd")
+        tempPath = slicer.app.temporaryPath
+        filename = "Box.nrrd"
+        filenameFull=os.path.join(tempPath,filename)
+        print filenameFull
+        writer.SetFileName(str(filenameFull))
         writer.Execute(self.image)
 
-        slicer.util.loadVolume("Box.nrrd")
 
-#       tempDir=slicer.app.
-#       filenameFull=os.path.join(tempDir,filename)
-#       4.8.6
+        slicer.util.loadVolume(filenameFull)
 
         #------------------------ Slice Intersection Visibility ----------------------#
         numDisplayNode = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelDisplayNode")
